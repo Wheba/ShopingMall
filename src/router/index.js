@@ -54,110 +54,196 @@ export const constantRoutes = [
       meta: { title: 'Dashboard', icon: 'dashboard' }
     }]
   },
-
-  {
-    path: '/example',
-    component: Layout,
-    redirect: '/example/table',
-    name: 'Example',
-    meta: { title: 'Example', icon: 'example' },
-    children: [
-      {
-        path: 'table',
-        name: 'Table',
-        component: () => import('@/views/table/index'),
-        meta: { title: 'Table', icon: 'table' }
-      },
-      {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/tree/index'),
-        meta: { title: 'Tree', icon: 'tree' }
-      }
-    ]
-  },
-
-  {
-    path: '/form',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        name: 'Form',
-        component: () => import('@/views/form/index'),
-        meta: { title: 'Form', icon: 'form' }
-      }
-    ]
-  },
-
-  {
-    path: '/nested',
-    component: Layout,
-    redirect: '/nested/menu1',
-    name: 'Nested',
-    meta: {
-      title: 'Nested',
-      icon: 'nested'
-    },
-    children: [
-      {
-        path: 'menu1',
-        component: () => import('@/views/nested/menu1/index'), // Parent router-view
-        name: 'Menu1',
-        meta: { title: 'Menu1' },
-        children: [
-          {
-            path: 'menu1-1',
-            component: () => import('@/views/nested/menu1/menu1-1'),
-            name: 'Menu1-1',
-            meta: { title: 'Menu1-1' }
-          },
-          {
-            path: 'menu1-2',
-            component: () => import('@/views/nested/menu1/menu1-2'),
-            name: 'Menu1-2',
-            meta: { title: 'Menu1-2' },
-            children: [
-              {
-                path: 'menu1-2-1',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-1'),
-                name: 'Menu1-2-1',
-                meta: { title: 'Menu1-2-1' }
-              },
-              {
-                path: 'menu1-2-2',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-2'),
-                name: 'Menu1-2-2',
-                meta: { title: 'Menu1-2-2' }
-              }
-            ]
-          },
-          {
-            path: 'menu1-3',
-            component: () => import('@/views/nested/menu1/menu1-3'),
-            name: 'Menu1-3',
-            meta: { title: 'Menu1-3' }
-          }
-        ]
-      },
-      {
-        path: 'menu2',
-        component: () => import('@/views/nested/menu2/index'),
-        meta: { title: 'menu2' }
-      }
-    ]
-  },
-
-  {
-    path: 'external-link',
-    component: Layout,
-    children: [
-      {
-        path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
-        meta: { title: 'External Link', icon: 'link' }
-      }
-    ]
-  },
+	
+	{
+		path:'/data',
+		component:Layout,
+		redirect: 'noRedirect',
+		name: 'Data',
+		alwaysShow: true,
+		meta: { title: '数据台', icon: 'chart' },
+		children:[
+			{
+				path:'overview',
+				component: () => import('@/views/data/overview'),
+				meta: { title: '数据概览' }
+			},
+			{
+				path:'revenue',
+				component: () => import('@/views/data/revenue'),
+				meta: { title: '营收数据' }
+			},
+			{
+				path:'commodity',
+				component: () => import('@/views/data/commodity'),
+				meta: { title: '商品数据' }
+			},
+			{
+				path:'user',
+				component: () => import('@/views/data/user'),
+				meta: { title: '用户数据' }
+			}
+		]
+	},
+	
+	{
+		path:'/order',
+		component:Layout,
+		redirect: 'noRedirect',
+		name: 'Order',
+		alwaysShow: true,
+		meta: { title: '订单管理', icon: 'list' },
+		children:[
+			{
+				path:'commodity',
+				component: () => import('@/views/order/commodity'),
+				meta: { title: '商品订单' }
+			},{
+				path:'cardticket',
+				component: () => import('@/views/order/cardticket'),
+				meta: { title: '卡券订单' }
+			}
+		]
+	},
+	
+	{
+		path:'/commodity',
+		component:Layout,
+		redirect: 'noRedirect',
+		name: 'Commodity',
+		alwaysShow: true,
+		meta: { title: '商品管理', icon: 'list' },
+		children:[
+			{
+				path:'commodity',
+				component: () => import('@/views/commodity/commodity'),
+				meta: { title: '商品列表' }
+			},
+			{
+				path:'class',
+				component: () => import('@/views/commodity/class'),
+				meta: { title: '分类列表' }
+			}
+		]
+	},
+	
+	{
+		path:'/cardticket',
+		component:Layout,
+		redirect: 'noRedirect',
+		name: 'Cardticket',
+		alwaysShow: true,
+		meta: { title: '卡券管理', icon: 'table' },
+		children:[
+			{
+				path:'add',
+				component: () => import('@/views/cardticket/add'),
+				meta: { title: '添加卡券' }
+			},
+			{
+				path:'cardticket',
+				component: () => import('@/views/cardticket/cardticket'),
+				meta: { title: '卡券列表' }
+			}
+		]
+	},
+	
+	{
+		path:'/supplier',
+		component:Layout,
+		redirect: 'noRedirect',
+		name: 'Supplier',
+		alwaysShow: true,
+		meta: { title: '供应商管理', icon: 'table' },
+		children:[
+			{
+				path:'supplier',
+				component: () => import('@/views/supplier/supplier'),
+				meta: { title: '供应商列表' }
+			},
+			{
+				path:'settlement',
+				component: () => import('@/views/supplier/settlement'),
+				meta: { title: '供应商结算明细' }
+			}
+		]
+	},
+	
+	{
+		path:'/channel',
+		component:Layout,
+		redirect: 'noRedirect',
+		name: 'Channel',
+		alwaysShow: true,
+		meta: { title: '渠道管理', icon: 'table' },
+		children:[{
+			path:'channel',
+			component: () => import('@/views/channel'),
+			meta: { title: '渠道列表' }
+		}]
+	},
+	
+	{
+		path:'/member',
+		component:Layout,
+		redirect: 'noRedirect',
+		name: 'Member',
+		alwaysShow: true,
+		meta: { title: '会员管理', icon: 'user' },
+		children:[{
+			path:'member',
+			component: () => import('@/views/member/member'),
+			meta: { title: '会员列表' }
+		},{
+			path:'recharge',
+			component: () => import('@/views/member/recharge'),
+			meta: { title: '积分充值' }
+		},{
+			path:'journal',
+			component: () => import('@/views/member/journal'),
+			meta: { title: '充值日志' }
+		}]
+	},
+	
+	{
+		path:'/activity',
+		component:Layout,
+		redirect: 'noRedirect',
+		name: 'Activity',
+		alwaysShow: true,
+		meta: { title: '活动管理', icon: 'table' },
+		children:[{
+			path:'activity',
+			component: () => import('@/views/activity/activity'),
+			meta: { title: '活动列表' }
+		}]
+	},
+	
+	{
+		path:'/system',
+		component:Layout,
+		redirect: 'noRedirect',
+		name: 'System',
+		alwaysShow: true,
+		meta: { title: '系统管理', icon: 'system' },
+		children:[{
+			path:'account',
+			component: () => import('@/views/system/account'),
+			meta: { title: '账户管理' }
+		},{
+			path:'role',
+			component: () => import('@/views/system/role'),
+			meta: { title: '角色管理' }
+		},{
+			path:'interface',
+			component: () => import('@/views/system/interface'),
+			meta: { title: '界面配置' }
+		},{
+			path:'express',
+			component: () => import('@/views/system/express'),
+			meta: { title: '快递管理' }
+		}]
+	},
 
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }

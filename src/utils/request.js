@@ -7,7 +7,7 @@ import qs from 'qs'
 // create an axios instance
 const service = axios.create({
   baseURL: 'http://www.jiyou-tech.com:8080/m/v1/', // url = base url + request url
-	response:'json',
+	responseType:'json',
   withCredentials: true, // send cookies when cross-domain requests
   timeout: 5000 // request timeout
 })

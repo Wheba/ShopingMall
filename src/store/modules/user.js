@@ -56,6 +56,7 @@ const actions = {
         const { account, token } = datas
 
 				commit('SET_TOKEN', token)
+				setToken(token)
         commit('SET_NAME', account)
         commit('SET_AVATAR', 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif')
         resolve(datas)

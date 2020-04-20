@@ -7,8 +7,8 @@ const state = {
   sidebarLogo: sidebarLogo,
 	sizeHeader:'mini',
 	baseImgUrl:process.env.VUE_APP_BASE_API+'web',
-	uploadApi:process.env.VUE_APP_BASE_API+"m/"+process.env.VUE_APP_BASE_V+"/upload",
-	uploadsApi:process.env.VUE_APP_BASE_API+"m/"+process.env.VUE_APP_BASE_V+"/uploads"
+	uploadApi:process.env.VUE_APP_BASE_API+"upload",
+	uploadsApi:process.env.VUE_APP_BASE_API+"uploads"
 }
 
 const mutations = {

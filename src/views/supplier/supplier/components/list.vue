@@ -37,7 +37,7 @@
 				</el-table-column>
 			</el-table>
 			<div style="margin-top: 10px;">
-				<el-pagination :current-page.sync="searchForm.page" :page-sizes="[1,10,20,3.,40,50]" :page-size="searchForm.num" layout="total, prev, pager, next,sizes,jumper" :total="total" @size-change="changeSize" @current-change="changePage">
+				<el-pagination :current-page.sync="searchForm.page" :page-sizes="[10,20,3.,40,50]" :page-size="searchForm.num" layout="total, prev, pager, next,sizes,jumper" :total="total" @size-change="changeSize" @current-change="changePage">
 				</el-pagination>
 			</div>
 		</el-card>
@@ -61,7 +61,7 @@
 				queryForm: {},
 				searchForm: {
 					page: 1,
-					num: 1,
+					num: 10,
 					where: []
 				},
 				tableData: [],

@@ -130,7 +130,7 @@
 			query(){
 				var where = [];
 				for (let i in this.searchForm) {
-					if(this.searchForm[i]){
+					if(i=='online'||this.searchForm[i]){
 						where.push({
 							k:i,
 							v:i=='name'?'%'+this.searchForm[i]+'%':this.searchForm[i],

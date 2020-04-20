@@ -127,3 +127,22 @@ export function deepClone(source) {
 	})
 	return targetObj
 }
+/**
+ * @param {Object} money
+ * 转换成金额格式
+ */
+export function toMoneyStr(money){
+	return Number(money/100).toFixed(2)
+}
+/**
+ * 检测金额格式
+ */
+export function checkMoney(moneyStr){
+	let val = moneyStr;
+	val = val.replace(/[^\d.]/g, ""); //清除"数字"和"."以外的字符
+	val = val.replace(/\.{2,}/g, "."); //只保留第一个. 清除多余的
+	val = val.replace(/^0+\./g, '0.');
+	val = val.match(/^0+[1-9]+/) ? val = val.replace(/^0+/g, '') : val
+	val = (val.match(/^\d*(\.?\d{0,2})/g)[0]) || ''
+	return val
+}

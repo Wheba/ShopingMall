@@ -1,5 +1,7 @@
 <template>
-	<div>供应商列表页</div>
+	<div class="app-container">
+		<router-view />
+	</div>
 </template>
 
 <script>

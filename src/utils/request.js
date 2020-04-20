@@ -6,11 +6,17 @@ import qs from 'qs'
 
 // create an axios instance
 const service = axios.create({
-  baseURL: 'http://www.jiyou-tech.com:8080/m/v1/', // url = base url + request url
+  baseURL: getBaseURL(), // url = base url + request url
 	responseType:'json',
   withCredentials: true, // send cookies when cross-domain requests
-  timeout: 5000 // request timeout
+  timeout: 5000, // request timeout
+	paramsSerializer: params => {
+	    return qs.stringify(params)
+	},
 })
+function getBaseURL(){
+	return process.env.VUE_APP_BASE_API+'m/'+process.env.VUE_APP_BASE_V+'/'
+}
 
 // request interceptor
 service.interceptors.request.use(
@@ -60,11 +66,11 @@ service.interceptors.response.use(
       })
 
       // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
-      if (res.code === 50008 || res.code === 50012 || res.code === 50014) {
+      if (res.code === -102 || res.code === 50012 || res.code === 50014) {
         // to re-login
-        MessageBox.confirm('You have been logged out, you can cancel to stay on this page, or log in again', 'Confirm logout', {
-          confirmButtonText: 'Re-Login',
-          cancelButtonText: 'Cancel',
+        MessageBox.confirm('您的账号需要重新登录', '重新登录', {
+          confirmButtonText: '重新登录',
+          cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
           store.dispatch('user/resetToken').then(() => {

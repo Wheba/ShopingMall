@@ -16,11 +16,7 @@
 		<el-card style="margin-top: 15px;">
 			<el-button type="primary" icon='el-icon-plus' :size='sizeHeader' @click="addMember">添加会员</el-button>
 			<el-table :data="tableData" border :size='sizeHeader' style='margin-top: 10px;'>
-				<el-table-column label="编号" width="100" align='center'>
-					<template slot-scope="scope">
-						<span v-text="(form.page-1)*form.num+1+scope.$index"></span>
-					</template>
-				</el-table-column>
+				<el-table-column type="index" :index="indexMethod" label='编号' align='center'></el-table-column>
 				<el-table-column prop="id" label="会员ID" align='center'></el-table-column>
 				<el-table-column prop="account" label="会员名称" align='center'></el-table-column>
 				<el-table-column prop="phone" label="会员手机号" align='center'></el-table-column>
@@ -29,11 +25,7 @@
 						<span v-text="scope.row.state?'正常':'停用'"></span>
 					</template>
 				</el-table-column>
-				<el-table-column prop="created" label="创建时间" align='center'>
-					<template slot-scope="scope">
-						<span v-text="showTime(scope.row.created)"></span>
-					</template>
-				</el-table-column>
+				<el-table-column prop='created' label="注册时间" align='center' :formatter="showTime"></el-table-column>
 				<el-table-column label="操作" align='center'>
 					<template slot-scope="scope">
 						<el-button type="text" @click='editMember(scope.row)'>编辑</el-button>
@@ -47,8 +39,8 @@
 				</el-table-column>
 			</el-table>
 			<div style="margin-top: 10px;">
-				<el-pagination :current-page.sync="form.page" :page-size="100" layout="total, prev, pager, next,sizes,jumper"
-				 :total="total">
+				<el-pagination :current-page.sync="form.page" :page-size="form.num" :page-sizes="[10,20,3.,40,50]" layout="total, prev, pager, next,sizes,jumper"
+				 :total="total" @current-change="changePage" @size-change="changeSize">
 				</el-pagination>
 			</div>
 		</el-card>
@@ -69,6 +61,7 @@
 		parseTime
 	} from '@/utils'
 	import editTime from './edit.vue'
+	import qs from 'qs'
 	export default {
 		components: {
 			editTime
@@ -98,8 +91,11 @@
 			this.seachFrom();
 		},
 		methods: {
-			showTime(time) {
-				return parseTime(time)
+			indexMethod(index){
+				return (this.form.page-1)*this.form.num+1+index
+			},
+			showTime(row, column, cellValue, index){
+				return parseTime(cellValue)
 			},
 			getList() {
 				getUserList(this.form).then(res => {
@@ -115,12 +111,14 @@
 			seachFrom() {
 				var where = [];
 				for (let i in this.searchForm) {
-					var data={
-						k:i,
-						v:this.searchForm[i],
-						op:'='
+					if(this.searchForm[i]){
+						var data={
+							k:i,
+							v:this.searchForm[i],
+							op:'='
+						}
+						where.push(data)
 					}
-					where.push(data)
 				}
 				this.form.where = where;
 				this.getList();
@@ -150,6 +148,15 @@
 			},
 			editSuccess() {
 				this.closeEdit();
+				this.getList();
+			},
+			//分页编辑
+			changePage(e){
+				this.form.page=e;
+				this.getList();
+			},
+			changeSize(e){
+				this.form.num=e;
 				this.getList();
 			}
 		}

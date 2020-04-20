@@ -1,12 +1,14 @@
 import defaultSettings from '@/settings'
 
 const { showSettings, fixedHeader, sidebarLogo } = defaultSettings
-
 const state = {
   showSettings: showSettings,
   fixedHeader: fixedHeader,
   sidebarLogo: sidebarLogo,
-	sizeHeader:'mini'
+	sizeHeader:'mini',
+	baseImgUrl:process.env.VUE_APP_BASE_API+'web',
+	uploadApi:process.env.VUE_APP_BASE_API+"m/"+process.env.VUE_APP_BASE_V+"/upload",
+	uploadsApi:process.env.VUE_APP_BASE_API+"m/"+process.env.VUE_APP_BASE_V+"/uploads"
 }
 
 const mutations = {

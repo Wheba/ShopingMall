@@ -116,8 +116,19 @@ export const constantRoutes = [
 		children:[
 			{
 				path:'commodity',
-				component: () => import('@/views/commodity/commodity'),
-				meta: { title: '商品列表' }
+				redirect: '/commodity/commodity/list',
+				component: () => import('@/views/commodity/commodity/index'),
+				meta: { title: '商品列表'},
+				children:[{
+					path:'list',
+					component: () => import('@/views/commodity/commodity/components/list'),
+					meta: { title: '商品列表',breadcrumb: false},
+				},{
+					path:'edit',
+					component: () => import('@/views/commodity/commodity/components/edit'),
+					meta: { title: '商品详情'},
+					hidden:true
+				}]
 			},
 			{
 				path:'class',
@@ -158,8 +169,19 @@ export const constantRoutes = [
 		children:[
 			{
 				path:'supplier',
+				redirect: '/supplier/supplier/list',
 				component: () => import('@/views/supplier/supplier'),
-				meta: { title: '供应商列表' }
+				meta: { title: '供应商列表' },
+				children:[{
+					path:'list',
+					component: () => import('@/views/supplier/supplier/components/list'),
+					meta: { title: '供应商列表',breadcrumb: false},
+				},{
+					path:'edit',
+					component: () => import('@/views/supplier/supplier/components/edit'),
+					meta: { title: '新增编辑'},
+					hidden:true
+				}]
 			},
 			{
 				path:'settlement',

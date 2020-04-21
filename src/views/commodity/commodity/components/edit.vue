@@ -7,6 +7,12 @@
 					<el-button icon='el-icon-refresh-left' style="float: right; padding: 3px 0" type="text">刷新</el-button>
 				</div>
 				<div>
+					<el-form-item label="标题">
+						<el-input v-model="form.title" placeholder="请输入标题" :style="{width: inputWidth+'px'}"></el-input>
+					</el-form-item>
+					<el-form-item label="副标题">
+						<el-input v-model="form.title_sub" placeholder="请输入副标题" :style="{width: inputWidth+'px'}"></el-input>
+					</el-form-item>
 					<el-form-item label="商品名称">
 						<el-input v-model="form.name" placeholder="请输入商品名称" :style="{width: inputWidth+'px'}"></el-input>
 					</el-form-item>
@@ -44,14 +50,14 @@
 			<el-card style="margin-top: 15px;">
 				<el-alert style="margin-bottom: 10px;" title="限上传一张缩略图,尺寸最佳为180x180像素" type="info" show-icon :closable="false"></el-alert>
 				<el-form-item label="主缩略图">
-					<el-upload class="avatar-uploader" :action="uploadApi" :show-file-list="false" :with-credentials="true">
-						<img v-if="imageUrl" :src="imageUrl" class="avatar">
+					<el-upload class="avatar-uploader" :action="uploadApi" :show-file-list="false" :with-credentials="true" :before-upload="beforeAvatarUpload1" :on-success="handleAvatarSuccess1">
+						<img v-if="form.product_main_pic" :src="form.product_main_pic" class="avatar">
 						<i v-else class="el-icon-plus avatar-uploader-icon"></i>
 					</el-upload>
 				</el-form-item>
 				<el-alert style="margin-bottom: 10px;" title="限上传五张缩略图,尺寸最佳为640x640像素" type="info" show-icon :closable="false"></el-alert>
 				<el-form-item label="轮播顶图">
-					<el-upload :action="uploadsApi" list-type="picture-card">
+					<el-upload :action="uploadApi" :file-list="slideList" :multiple="true" :limit="5" :on-exceed="onExceedUpload" :before-upload="beforeAvatarUpload2" list-type="picture-card">
 						<i class="el-icon-plus"></i>
 					</el-upload>
 				</el-form-item>
@@ -84,8 +90,8 @@
 			return {
 				inputWidth: 300,
 				id: null, //商品id
-				form: {},
-				imageUrl: ''
+				form: {product_main_pic:null},
+				slideList:[{name:'',url:'http://static.jiyou-tech.com//easyshop/20200421/2020-04-21_104845.png'}]
 			}
 		},
 		created() {
@@ -105,6 +111,8 @@
 					id: this.id
 				}).then(res => {
 					var {
+						title,
+						title_sub,
 						name,
 						category,
 						product_code,
@@ -119,6 +127,8 @@
 					price_supply = toMoneyStr(price_supply)
 					var provider_id = provider.id;
 					this.form = {
+						title,
+						title_sub,
 						name,
 						category,
 						product_code,
@@ -131,7 +141,34 @@
 			},
 			onMoneyInput(e, keyName) {
 				this.form[keyName] = checkMoney(e);
-			}
+			},
+			//上传主缩略图
+			beforeAvatarUpload1(file){
+				const isLt2M = file.size / 1024 / 1024 < 2;
+				if (!isLt2M) {
+					this.$message.error('上传主缩略图大小不能超过 2MB!');
+				}
+				return isLt2M;
+			},
+			handleAvatarSuccess1(res, file){
+				if(res.code==0){
+					this.$set(this.form,'product_main_pic',res.datas)
+				}else{
+					this.$message.error('图片上传失败！请重新上传');
+				}
+			},
+			//轮播图上传
+			onExceedUpload(files,fileList){
+				this.$message.warning('仅限上传五张轮播图');
+			},
+			beforeAvatarUpload2(file){
+				console.log(file)
+				const isLt2M = file.size / 1024 / 1024 < 2;
+				if (!isLt2M) {
+					this.$message.error('上传轮播图大小不能超过 2MB!');
+				}
+				return isLt2M;
+			},
 		}
 	}
 </script>
@@ -163,11 +200,19 @@
 			width: 100px;
 			height: 100px;
 			display: block;
+			object-fit: contain;
 		}
 		.el-upload--picture-card{
 			width: 100px;
 			height: 100px;
 			line-height: 100px;
+		}
+		.el-upload-list--picture-card .el-upload-list__item{
+			width: 100px;
+			height: 100px;
+			img{
+				object-fit: contain;
+			}
 		}
 	}
 </style>

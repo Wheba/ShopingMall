@@ -237,7 +237,13 @@ export const constantRoutes = [
 		children:[{
 			path:'activity',
 			component: () => import('@/views/activity/activity'),
-			meta: { title: '活动列表' }
+			meta: { title: '活动列表' },
+			redirect: '/activity/activity/list',
+			children:[{
+				path:'list',
+				component: () => import('@/views/activity/activity/components/list'),
+				meta: { title: '活动列表' }
+			}]
 		}]
 	},
 	

@@ -38,7 +38,7 @@
 				<el-table-column label="商品信息" align='center' min-width='200'>
 					<template slot-scope="scope">
 						<div style="display: flex;justify-content: center;align-items: center;">
-							<el-image style="width: 80px; height: 80px;flex-basis: 80px;" :src="baseImgUrl+scope.row.product_main_pic" fit="cover"></el-image>
+							<el-image style="width: 80px; height: 80px;flex-basis: 80px;" :src="scope.row.product_main_pic" fit="cover"></el-image>
 							<div style="text-align: left;margin-left: 10px;">
 								<p v-text="scope.row.name"></p>
 								<p>商品编号：{{scope.row.product_code}}</p>
@@ -66,8 +66,12 @@
 				<el-table-column label="操作" align='center' fixed="right">
 					<template slot-scope="scope">
 						<el-button type="text" @click="editComponents(scope.row.id)">修改</el-button>
-						<el-button type="text" v-if="!scope.row.online"><span style="color: red;">上架</span></el-button>
-						<el-button type="text" else><span style="color: red;">下架</span></el-button>
+						<el-popconfirm title="您确定要上架？" @onConfirm="editState(scope.row,true)" v-if="!scope.row.online">
+							<el-button slot="reference" type="text"><span style="color: red;">上架</span></el-button>
+						</el-popconfirm>
+						<el-popconfirm title="您确定要下架？" @onConfirm="editState(scope.row,false)" v-else>
+							<el-button slot="reference" type="text"><span style="color: red;">下架</span></el-button>
+						</el-popconfirm>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -86,7 +90,8 @@
 		mapState
 	} from 'vuex'
 	import {
-		getProcuct
+		getProcuct,
+		editProcuctInfo
 	} from '@/api/commodity/commodity'
 	import {
 		parseTime,
@@ -94,7 +99,7 @@
 	} from '@/utils'
 	export default {
 		computed: {
-			...mapGetters(['sizeHeader',"baseImgUrl"]),
+			...mapGetters(['sizeHeader']),
 			...mapState({
 				providerList: state => state.data.providerList
 			})
@@ -166,6 +171,16 @@
 					query:{
 						id:id
 					}
+				})
+			},
+			//上下架
+			editState(data,state){
+				var {id,version,online}=data;
+				var form={id,version,online};
+				form.online=state;
+				editProcuctInfo(form).then(res=>{
+					this.$message.success('操作成功');
+					this.getProcuct();
 				})
 			}
 		}

@@ -184,6 +184,7 @@
 							this.isSubmit=true;
 							this.$router.push('/supplier/supplier/list')
 							this.$message.success('操作成功');
+							this.$store.dispatch('data/providerList')
 						})
 					} else {
 						console.log('error submit!!');

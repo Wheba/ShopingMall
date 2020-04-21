@@ -29,3 +29,13 @@ export function getProcuctInfo(params){
 		params
 	})
 }
+/**
+ * 新增修改商品信息
+ */
+export function editProcuctInfo(data){
+	return request({
+	  url: 'add_edit/product',
+	  method: 'post',
+		data
+	})
+}

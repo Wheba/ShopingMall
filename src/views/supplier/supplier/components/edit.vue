@@ -13,13 +13,13 @@
 			</el-form-item>
 			<h3>联系人信息</h3>
 			<el-form-item label="联系人" prop="Name">
-				<el-input v-model="form.contacters[0].Name" placeholder="联系人" :style="{width: inputWidth+'px'}"></el-input>
+				<el-input v-model="form.contacters[0].name" placeholder="联系人" :style="{width: inputWidth+'px'}"></el-input>
 			</el-form-item>
 			<el-form-item label="手机号" prop='Phone'>
-				<el-input v-model="form.contacters[0].Phone" placeholder="请输入手机号" :style="{width: inputWidth+'px'}"></el-input>
+				<el-input v-model="form.contacters[0].phone" placeholder="请输入手机号" :style="{width: inputWidth+'px'}"></el-input>
 			</el-form-item>
 			<el-form-item label="联系地址" prop="Address">
-				<el-input v-model="form.contacters[0].Address" placeholder="请输入联系地址" :style="{width: inputWidth+'px'}"></el-input>
+				<el-input v-model="form.contacters[0].address" placeholder="请输入联系地址" :style="{width: inputWidth+'px'}"></el-input>
 			</el-form-item>
 			<h3>账户信息信息</h3>
 			<el-form-item label="开户银行" prop="bank_name">
@@ -61,21 +61,21 @@
 		},
 		data() {
 			var Name = (rule, value, callback) => {
-				if(this.form.contacters[0].Name){
+				if(this.form.contacters[0].name){
 					callback();
 				}else{
 					callback(new Error('请输入联系人'));
 				}
 			};
 			var Phone = (rule, value, callback) => {
-				if(this.form.contacters[0].Phone){
+				if(this.form.contacters[0].phone){
 					callback();
 				}else{
 					callback(new Error('请输入手机号'));
 				}
 			};
 			var Address = (rule, value, callback) => {
-				if(this.form.contacters[0].Address){
+				if(this.form.contacters[0].address){
 					callback();
 				}else{
 					callback(new Error('请输入联系地址'));
@@ -86,9 +86,9 @@
 				id: null, //代理商id
 				form: {
 					contacters: [{
-						Name: '',
-						Phone: "",
-						Address: ""
+						name: '',
+						phone: "",
+						address: ""
 					}]
 				},
 				isSubmit: false,
@@ -159,6 +159,11 @@
 				getSupplierInfo({
 					id: this.id
 				}).then(res => {
+					if(!res.datas.contacters){
+						res.datas.contacters=[{name: '',
+						phone: "",
+						address: ""}]
+					}
 					this.form = deepClone(res.datas);
 					console.log(this.form)
 				})
@@ -176,7 +181,9 @@
 							form.id=this.form.id
 						}
 						editSupplier(form).then(res => {
-							console.log(res)
+							this.isSubmit=true;
+							this.$router.push('/supplier/supplier/list')
+							this.$message.success('操作成功');
 						})
 					} else {
 						console.log('error submit!!');

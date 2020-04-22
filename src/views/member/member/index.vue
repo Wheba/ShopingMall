@@ -29,10 +29,10 @@
 				<el-table-column label="操作" align='center'>
 					<template slot-scope="scope">
 						<el-button type="text" @click='editMember(scope.row)'>编辑</el-button>
-						<el-popconfirm title="您确定要停用？" @onConfirm="changeMemberState(scope.row,'')" v-if="scope.row.state">
+						<el-popconfirm title="您确定要停用？" @onConfirm="changeMemberState(scope.row,0)" v-if="scope.row.state">
 							<el-button slot="reference" type="text"><span style="color: red;">停用</span></el-button>
 						</el-popconfirm>
-						<el-popconfirm title="您确定要启用？" @onConfirm="changeMemberState(scope.row,'1')" v-else>
+						<el-popconfirm title="您确定要启用？" @onConfirm="changeMemberState(scope.row,1)" v-else>
 							<el-button slot="reference" type="text">启用</el-button>
 						</el-popconfirm>
 					</template>
@@ -134,9 +134,9 @@
 				this.showEdit = true;
 			},
 			changeMemberState(data,state){
-				data=deepClone(data);
-				data.state=state
-				editUser(data).then(res=>{
+				var {id,version}=data;
+				var form={id,version,state}
+				editUser(form).then(res=>{
 					if(res.code==0){
 						this.$message.success('操作成功');
 						this.getList();

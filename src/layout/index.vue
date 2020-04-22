@@ -44,6 +44,7 @@ export default {
   },
 	created() {
 		this.$store.dispatch('data/providerList')
+		this.$store.dispatch('data/payMentList')
 	},
   methods: {
     handleClickOutside() {

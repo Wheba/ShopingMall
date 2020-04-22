@@ -1,5 +1,7 @@
 <template>
-	<div>渠道列表页面</div>
+	<div class="app-container">
+		<router-view />
+	</div>
 </template>
 
 <script>

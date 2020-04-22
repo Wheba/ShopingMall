@@ -201,7 +201,18 @@ export const constantRoutes = [
 		children:[{
 			path:'channel',
 			component: () => import('@/views/channel'),
-			meta: { title: '渠道列表' }
+			meta: { title: '渠道列表' },
+			redirect: '/channel/channel/list',
+			children:[{
+				path:'list',
+				component: () => import('@/views/channel/components/list'),
+				meta: { title: '渠道列表',breadcrumb: false}
+			},{
+				path:'edit',
+				component: () => import('@/views/channel/components/edit'),
+				meta: { title: '新增或编辑' },
+				hidden:true
+			}]
 		}]
 	},
 	

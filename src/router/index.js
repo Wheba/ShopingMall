@@ -285,7 +285,18 @@ export const constantRoutes = [
 		},{
 			path:'express',
 			component: () => import('@/views/system/express'),
-			meta: { title: '快递管理' }
+			meta: { title: '快递管理' },
+			redirect: '/system/express/list',
+			children:[{
+				path:'list',
+				component: () => import('@/views/system/express/components/list'),
+				meta: { title: '快递管理',breadcrumb: false}
+			},{
+				path:'edit',
+				component: () => import('@/views/system/express/components/edit'),
+				meta: { title: '新增或编辑' },
+				hidden:true
+			}]
 		}]
 	},
 

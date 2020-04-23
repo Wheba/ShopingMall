@@ -1,5 +1,7 @@
 <template>
-	<div>快递管理</div>
+	<div class="app-container">
+		<router-view />
+	</div>
 </template>
 
 <script>

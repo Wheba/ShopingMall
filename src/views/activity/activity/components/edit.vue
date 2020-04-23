@@ -15,12 +15,12 @@
 				</el-select>
 			</el-form-item>
 			<el-form-item label="开始时间" prop="start_time">
-				<el-date-picker value-format="timestamp" v-model="form.start_time" type="datetime" placeholder="选择开始时间"
+				<el-date-picker value-format="yyyy-MM-dd HH:mm:ss" v-model="form.start_time" type="datetime" placeholder="选择开始时间"
 				 :style="{width: inputWidth+'px'}">
 				</el-date-picker>
 			</el-form-item>
 			<el-form-item label="结束时间" prop="end_time">
-				<el-date-picker value-format="timestamp" v-model="form.end_time" type="datetime" placeholder="选择结束时间"
+				<el-date-picker value-format="yyyy-MM-dd HH:mm:ss" v-model="form.end_time" type="datetime" placeholder="选择结束时间"
 				 :style="{width: inputWidth+'px'}">
 				</el-date-picker>
 			</el-form-item>
@@ -38,11 +38,15 @@
 		mapState
 	} from 'vuex'
 	import {
-		addOrEditActivity
+		addOrEditActivity,
+		getActivityInfo
 	} from '@/api/activity/activity'
 	import {
 		getChannelList
 	} from '@/api/channel/channel'
+	import {
+		parseTime
+	} from '@/utils'
 	export default {
 		computed: {
 			...mapGetters(['sizeHeader']),
@@ -53,6 +57,7 @@
 		data() {
 			return {
 				inputWidth: 300,
+				id:null,//活动id
 				form: {},
 				channelList: [], //渠道列表
 				isSubmit: false,
@@ -86,9 +91,22 @@
 			}
 		},
 		created() {
+			this.id = this.$route.query.id;
+			if (this.id) { //编辑
+				this.getActivityInfo()
+			}
 			this.getChannelList()
 		},
 		methods: {
+			getActivityInfo(){
+				getActivityInfo({id:this.id}).then(res=>{
+					var {id,name,type,payment_channel_id,start_time,end_time,version}=res.datas;
+					//时间转换
+					start_time=parseTime(start_time);
+					end_time=parseTime(start_time);
+					this.form={id,name,type,payment_channel_id,start_time,end_time,version};
+				})
+			},
 			getChannelList() {
 				getChannelList({
 					where: [{
@@ -106,9 +124,11 @@
 					if (valid) {
 						this.isSubmit=true;
 						var {name,type,payment_channel_id,start_time,end_time}=this.form;
-						start_time/=1000;
-						end_time/=1000;
 						var form={name,type,payment_channel_id,start_time,end_time};
+						if(this.form.id){
+							form.id=this.form.id;
+							form.version=this.form.version;
+						}
 						addOrEditActivity(form).then(res=>{
 							this.$router.push('/activity/activity/list')
 							this.$message.success('操作成功');

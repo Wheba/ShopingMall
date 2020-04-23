@@ -7,6 +7,7 @@
 				</el-form-item>
 				<el-form-item label="供应商状态">
 					<el-select v-model="queryForm.state" placeholder="请选择">
+						<el-option label="全部" :value="null"></el-option>
 						<el-option label="正常" :value="1"></el-option>
 						<el-option label="停用" :value="0"></el-option>
 					</el-select>
@@ -58,7 +59,7 @@
 		},
 		data() {
 			return {
-				queryForm: {},
+				queryForm: {state:null},
 				searchForm: {
 					page: 1,
 					num: 10,
@@ -81,11 +82,11 @@
 			query() {
 				var where = [];
 				for (let i in this.queryForm) {
-					if(this.queryForm[i]){
+					if((i=='state'&&this.queryForm[i]==0)||this.queryForm[i]){
 						where.push({
 							k:i,
-							v:this.queryForm[i],
-							op:'='
+							v:i=='name'?'%'+this.queryForm[i]+'%':this.queryForm[i],
+							op:i=='name'?'like':'='
 						})
 					}
 				}

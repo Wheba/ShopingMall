@@ -19,3 +19,13 @@ export function addOrEditActivity(data){
 	  data
 	})
 }
+/**
+ * 获取活动信息
+ */
+export function getActivityInfo(params){
+	return request({
+	  url: 'get/activity',
+	  method: 'get',
+		params
+	})
+}

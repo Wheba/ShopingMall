@@ -10,6 +10,17 @@ export function getChannelPage(params){
 	})
 }
 /**
+ * @param {Object} params
+ * 获取渠道列表-list
+ */
+export function getChannelList(params){
+	return request({
+	  url: 'list/payment_channel',
+	  method: 'get',
+		params
+	})
+}
+/**
  * 获取渠道信息
  */
 export function getChannelInfo(params){

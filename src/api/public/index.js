@@ -8,3 +8,12 @@ export function getPayMentList(){
 	  method: 'get'
 	})
 }
+/**
+ * 获取活动类型
+ */
+export function getTypeActivityList(){
+	return request({
+	  url: 'type_activity/list',
+	  method: 'get'
+	})
+}

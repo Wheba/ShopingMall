@@ -9,3 +9,13 @@ export function getActivityPage(params){
 		params
 	})
 }
+/**
+ * 新增或编辑活动
+ */
+export function addOrEditActivity(data){
+	return request({
+	  url: 'add_edit/activity',
+	  method: 'post',
+	  data
+	})
+}

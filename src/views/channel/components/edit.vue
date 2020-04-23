@@ -31,8 +31,8 @@
 				<el-input v-model="form.payment_key" placeholder="请输入支付密钥" :style="{width: inputWidth+'px'}"></el-input>
 			</el-form-item>
 			<h3>备注信息</h3>
-			<el-form-item prop="commont">
-				<el-input type="textarea" :autosize="{ minRows: 2, maxRows: 4}" placeholder="备注信息" v-model="form.commont" :style="{width: inputWidth+'px'}">
+			<el-form-item prop="comment">
+				<el-input type="textarea" :autosize="{ minRows: 2, maxRows: 4}" placeholder="备注信息" v-model="form.comment" :style="{width: inputWidth+'px'}">
 				</el-input>
 			</el-form-item>
 			<el-form-item>
@@ -96,7 +96,7 @@
 						message: '请输入支付密钥',
 						trigger: 'blur'
 					}],
-					commont:[{
+					comment:[{
 						required: true,
 						message: '请输入备注信息',
 						trigger: 'blur'
@@ -127,11 +127,11 @@
 					if(valid){
 						this.isSubmit=true;
 						var form;
-						var {id,name,code,url,rate,payment_methods,payment_id,payment_key,commont,version}=this.form;
+						var {id,name,code,url,rate,payment_methods,payment_id,payment_key,comment,version}=this.form;
 						if(id){//编辑
-							form={id,name,code,url,rate,payment_methods,payment_id,payment_key,commont,version};
+							form={id,name,code,url,rate,payment_methods,payment_id,payment_key,comment,version};
 						}else{//新增
-							form={name,code,url,rate,payment_methods,payment_id,payment_key,commont};
+							form={name,code,url,rate,payment_methods,payment_id,payment_key,comment};
 						}
 						addOrEditChannel(form).then(res=>{
 							this.$router.push('/channel/channel/list')

@@ -253,7 +253,12 @@ export const constantRoutes = [
 			children:[{
 				path:'list',
 				component: () => import('@/views/activity/activity/components/list'),
-				meta: { title: '活动列表' }
+				meta: { title: '活动列表',breadcrumb: false }
+			},{
+				path:'edit',
+				component: () => import('@/views/activity/activity/components/edit'),
+				meta: { title: '新增或编辑' },
+				hidden:true
 			}]
 		}]
 	},

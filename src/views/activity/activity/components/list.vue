@@ -86,7 +86,7 @@
 			},
 			//添加活动
 			addActivity(){
-				
+				this.$router.push('/activity/activity/edit')
 			},
 			//编辑
 			editActivity(id){

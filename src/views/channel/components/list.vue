@@ -33,15 +33,20 @@
 				<el-table-column label="操作" align='center'>
 					<template slot-scope="scope">
 						<el-button type="text" @click='edit(scope.row.id)'>编辑</el-button>
-						<!-- <el-popconfirm title="您确定要停用？" @onConfirm="changeState(scope.row,0)" v-if="scope.row.state">
+						<el-popconfirm title="您确定要停用？" @onConfirm="changeState(scope.row,0)" v-if="scope.row.state">
 							<el-button slot="reference" type="text"><span style="color: red;">停用</span></el-button>
 						</el-popconfirm>
 						<el-popconfirm title="您确定要启用？" @onConfirm="changeState(scope.row,1)" v-else>
 							<el-button slot="reference" type="text">启用</el-button>
-						</el-popconfirm> -->
+						</el-popconfirm>
 					</template>
 				</el-table-column>
 			</el-table>
+			<div style="margin-top: 10px;">
+				<el-pagination :current-page.sync="searchForm.page" :page-size="searchForm.num" :page-sizes="[10,20,3.,40,50]" layout="total, prev, pager, next,sizes,jumper" 
+				:total="total" @current-change="changePage" @size-change="changeSize">
+				</el-pagination>
+			</div>
 		</el-card>
 	</div>
 </template>
@@ -51,7 +56,8 @@
 		mapGetters
 	} from 'vuex'
 	import {
-		getChannelPage
+		getChannelPage,
+		addOrEditChannel
 	} from '@/api/channel/channel'
 	import {
 		parseTime
@@ -84,11 +90,11 @@
 			query(){
 				var where = [];
 				for (let i in this.queryForm) {
-					if(this.queryForm[i]==0||this.queryForm[i]){
+					if((i=='state'&&this.queryForm[i]==0)||this.queryForm[i]){
 						where.push({
 							k:i,
-							v:this.queryForm[i],
-							op:'='
+							v:i=='name'?'%'+this.queryForm[i]+'%':this.queryForm[i],
+							op:i=='name'?'like':'='
 						})
 					}
 				}
@@ -113,6 +119,23 @@
 						id:id
 					}
 				})
+			},
+			changeState(data,state){
+				var {id,version}=data;
+				var form={id,version,state};
+				addOrEditChannel(form).then(res=>{
+					this.$message.success('操作成功');
+					this.getChannelPage();
+				})
+			},
+			//换页
+			changePage(e){
+				this.searchForm.page=e;
+				this.getChannelPage();
+			},
+			changeSize(e){
+				this.searchForm.num=e;
+				this.getChannelPage();
 			}
 		}
 	}

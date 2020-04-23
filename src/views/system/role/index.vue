@@ -1,5 +1,7 @@
 <template>
-	<div>角色管理页面</div>
+	<div class="app-container">
+		<router-view />
+	</div>
 </template>
 
 <script>

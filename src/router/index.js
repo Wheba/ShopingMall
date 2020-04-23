@@ -273,11 +273,33 @@ export const constantRoutes = [
 		children:[{
 			path:'account',
 			component: () => import('@/views/system/account'),
-			meta: { title: '账户管理' }
+			meta: { title: '账户管理' },
+			redirect: '/system/account/list',
+			children:[{
+				path:'list',
+				component: () => import('@/views/system/account/components/list'),
+				meta: { title: '账户管理',breadcrumb: false}
+			},{
+				path:'edit',
+				component: () => import('@/views/system/account/components/edit'),
+				meta: { title: '新增或编辑' },
+				hidden:true
+			}]
 		},{
 			path:'role',
 			component: () => import('@/views/system/role'),
-			meta: { title: '角色管理' }
+			meta: { title: '角色管理' },
+			redirect: '/system/role/list',
+			children:[{
+				path:'list',
+				component: () => import('@/views/system/role/components/list'),
+				meta: { title: '角色管理',breadcrumb: false}
+			},{
+				path:'edit',
+				component: () => import('@/views/system/role/components/edit'),
+				meta: { title: '新增或编辑' },
+				hidden:true
+			}]
 		},{
 			path:'interface',
 			component: () => import('@/views/system/interface'),

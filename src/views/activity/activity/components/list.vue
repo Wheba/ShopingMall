@@ -37,7 +37,7 @@
 				</el-table-column>
 			</el-table>
 			<div style="margin-top: 10px;">
-				<el-pagination :current-page.sync="searchForm.page" :page-size="searchForm.num" :page-sizes="[10,20,3.,40,50]" layout="total, prev, pager, next,sizes,jumper" 
+				<el-pagination :current-page.sync="searchForm.page" :page-size="searchForm.num" :page-sizes="[10,20,30,40,50]" layout="total, prev, pager, next,sizes,jumper" 
 				:total="total" @current-change="changePage" @size-change="changeSize">
 				</el-pagination>
 			</div>

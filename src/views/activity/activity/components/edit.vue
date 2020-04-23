@@ -106,8 +106,8 @@
 					if (valid) {
 						this.isSubmit=true;
 						var {name,type,payment_channel_id,start_time,end_time}=this.form;
-						start_time/=100;
-						end_time/=100;
+						start_time/=1000;
+						end_time/=1000;
 						var form={name,type,payment_channel_id,start_time,end_time};
 						addOrEditActivity(form).then(res=>{
 							this.$router.push('/activity/activity/list')

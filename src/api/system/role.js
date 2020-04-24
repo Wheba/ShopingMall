@@ -30,3 +30,13 @@ export function getRoleInfo(params){
 		params
 	})
 }
+/**
+ * 新增或编辑角色
+ */
+export function addOrEditRole(data){
+	return request({
+	  url: 'add_edit/Role',
+	  method: 'post',
+	  data
+	})
+}

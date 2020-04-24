@@ -9,7 +9,7 @@
 				<el-table-column prop="nick" label="联系人" align='center'></el-table-column>
 				<el-table-column prop="phone" label="联系人手机号" align='center'></el-table-column>
 				<el-table-column prop="created" label="创建时间" align='center' :formatter="showTime"></el-table-column>
-				<!-- <el-table-column prop="state" label="状态" align='center' :formatter="showState"></el-table-column> -->
+				<el-table-column prop="state" label="状态" align='center' :formatter="showState"></el-table-column>
 				<el-table-column label="操作" align='center'>
 					<template slot-scope="scope">
 						<el-button type="text" @click='edit(scope.row.id)'>编辑</el-button>
@@ -39,7 +39,8 @@
 		parseTime
 	} from '@/utils'
 	import {
-		getAccountPage
+		getAccountPage,
+		addOrEditAccount
 	} from '@/api/system/account'
 	export default{
 		computed: {
@@ -88,7 +89,12 @@
 			},
 			//切换状态
 			changeState(data,state){
-				
+				var {id,version}=data;
+				var form={id,version,state}
+				addOrEditAccount(form).then(res=>{
+					this.$message.success('操作成功');
+					this.getAccountPage();
+				})
 			},
 			//换页
 			changePage(e){

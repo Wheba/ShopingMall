@@ -7,7 +7,7 @@
 				<el-table-column prop="id" label="角色ID" align='center'></el-table-column>
 				<el-table-column prop="name" label="角色名称" align='center'></el-table-column>
 				<el-table-column prop="created" label="创建时间" align='center' :formatter="showTime"></el-table-column>
-				<!-- <el-table-column prop="state" label="状态" align='center' :formatter="showState"></el-table-column> -->
+				<el-table-column prop="state" label="状态" align='center' :formatter="showState"></el-table-column>
 				<el-table-column label="操作" align='center'>
 					<template slot-scope="scope">
 						<el-button type="text" @click='edit(scope.row.id)'>编辑</el-button>
@@ -37,7 +37,8 @@
 		parseTime
 	} from '@/utils'
 	import {
-		getRolePage
+		getRolePage,
+		addOrEditRole
 	} from '@/api/system/role'
 	export default{
 		computed: {
@@ -86,7 +87,12 @@
 			},
 			//切换状态
 			changeState(data,state){
-				
+				var {id,version}=data;
+				var form={id,version,state};
+				addOrEditRole(form).then(res=>{
+					this.$message.success('操作成功');
+					this.getRolePage();
+				})
 			},
 			//换页
 			changePage(e){

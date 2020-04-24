@@ -290,7 +290,7 @@
 						var form={name,short_name,code,address,level,contacters,bank_name,bank_account,bank_code,price_lists};
 						if(this.id){//编辑
 							form.id=this.id;
-							form.version=this.version;
+							form.version=this.form.version;
 						}
 						addOrEditExpress(form).then(res=>{
 							this.$router.push('/system/express/list')

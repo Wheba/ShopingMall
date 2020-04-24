@@ -19,3 +19,13 @@ export function getAccountInfo(params){
 		params
 	})
 }
+/**
+ * 新增或编辑账户
+ */
+export function addOrEditAccount(data){
+	return request({
+	  url: 'add_edit/Manager',
+	  method: 'post',
+	  data
+	})
+}

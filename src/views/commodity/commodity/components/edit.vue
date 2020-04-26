@@ -396,27 +396,12 @@
 					}
 				}
 				return list;
-				//console.log(list)
 			},
 			submit() {
 				this.$refs.form.validate(valid => {
 					if (valid) {
 						this.isSubmit = true;
 						this.addOrEditDetail();
-						console.log(this.detailForm)
-						// this.form.product_slide_pic=this.handleSlideList();
-						// //价格转换
-						// var form=deepClone(this.form)
-						// form.price_marketing*=100;
-						// form.price_sale*=100;
-						// form.price_supply*=100;
-						// editProcuctInfo(form).then(res=>{
-						// 	this.isSubmit=false;
-						// 	this.$message.success('操作成功');
-						// 	this.cancel();
-						// }).catch(error=>{
-						// 	this.isSubmit=false;
-						// })
 					} else {
 						console.log('error submit!!');
 						return false;
@@ -425,13 +410,39 @@
 			},
 			//新增或编辑详情
 			addOrEditDetail(){
-				var {id,detail}=this.detailForm;
+				var {id,detail,version}=this.detailForm;
 				var form={detail}
-				if(id){
+				if(id){//编辑
 					form.id=id;
+					form.version=version;
 				}
 				addOrEditProcuctDetail(form).then(res=>{
+					this.detailForm=res.datas;
+					this.addOrEditProcuct();
+				}).catch(error=>{
 					this.isSubmit=false;
+				})
+			},
+			//新增或编辑商品信息
+			addOrEditProcuct(){
+				var {id,version,title,title_sub,name,category_code,product_code,price_marketing,price_sale,price_supply,provider_id,online,product_main_pic,product_slide_pic,product_tags,product_tag_icons}=this.form;
+				//价格转换
+				price_marketing*=100;
+				price_sale*=100;
+				price_supply*=100;
+				//轮播图筛选
+				product_slide_pic=this.handleSlideList()
+				var form={title,title_sub,name,category_code,product_code,price_marketing,price_sale,price_supply,provider_id,online,product_main_pic,product_slide_pic,product_tags,product_tag_icons};
+				if(id){//编辑
+					form.id=id;
+					form.version=version;
+				}else{//新增
+					form.product_detail_id=this.detailForm.id;
+				}
+				editProcuctInfo(form).then(res=>{
+					this.isSubmit=false;
+					this.$message.success('操作成功');
+					this.cancel();
 				}).catch(error=>{
 					this.isSubmit=false;
 				})

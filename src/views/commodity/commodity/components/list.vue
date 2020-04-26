@@ -3,10 +3,11 @@
 		<el-card>
 			<el-form :inline="true" :model="searchForm" class="demo-form-inline" :size="sizeHeader">
 				<el-form-item label="商品分类">
-					<el-select v-model="searchForm.category" disabled placeholder="商品分类">
+					<el-cascader :clearable="true" :show-all-levels="false" :props="props" @change="changeClass"></el-cascader>
+					<!-- <el-select v-model="searchForm.category" disabled placeholder="商品分类">
 						<el-option label="分类1" value="分类1"></el-option>
 						<el-option label="分类2" value="分类2"></el-option>
-					</el-select>
+					</el-select> -->
 				</el-form-item>
 				<el-form-item label="商品名称">
 					<el-input v-model="searchForm.name" placeholder="商品名称"></el-input>
@@ -85,6 +86,7 @@
 </template>
 
 <script>
+	let id = 0;
 	import {
 		mapGetters,
 		mapState
@@ -93,6 +95,9 @@
 		getProcuct,
 		editProcuctInfo
 	} from '@/api/commodity/commodity'
+	import {
+		getCategoryList
+	} from '@/api/commodity/class'
 	import {
 		parseTime,
 		toMoneyStr
@@ -106,14 +111,35 @@
 		},
 		data() {
 			return {
-				searchForm: {online:true},
+				searchForm: {
+					online: true
+				},
 				form: {
 					page: 1,
 					num: 10,
-					where:[]
+					where: []
 				},
 				tableData: [],
 				total: 0,
+				props: {
+					lazy: true,
+					lazyLoad(node, resolve) {
+						console.log(node)
+						const {
+							level,
+							data
+						} = node;
+						getCategoryList({asc:['sort'],where: [{k: 'parent_id',v: data?data.id:0,op: '='}]}).then(res=>{
+							const nodes=res.datas.map(item=>({
+								value:item.code,
+								id:item.id,
+								label:item.name,
+								leaf: level >= 2
+							}))
+							resolve(nodes);
+						})
+					}
+				}
 			}
 		},
 		created() {
@@ -126,20 +152,20 @@
 			showTime(row, column, cellValue, index) {
 				return parseTime(cellValue)
 			},
-			showState(row, column, cellValue, index){
-				return cellValue?'上架':'下架'
+			showState(row, column, cellValue, index) {
+				return cellValue ? '上架' : '下架'
 			},
-			toMoneyStr(money){
+			toMoneyStr(money) {
 				return toMoneyStr(money)
 			},
-			query(){
+			query() {
 				var where = [];
 				for (let i in this.searchForm) {
-					if(i=='online'||this.searchForm[i]){
+					if (i == 'online' || this.searchForm[i]) {
 						where.push({
-							k:i,
-							v:i=='name'?'%'+this.searchForm[i]+'%':this.searchForm[i],
-							op:i=='name'?'like':'='
+							k: i,
+							v: i == 'name' ? '%' + this.searchForm[i] + '%' : this.searchForm[i],
+							op: i == 'name' ? 'like' : '='
 						})
 					}
 				}
@@ -154,34 +180,45 @@
 					}
 				})
 			},
-			refresh(){
-				this.tableData=[];
+			refresh() {
+				this.tableData = [];
 				this.getProcuct();
 			},
 			//新增商品
-			addComponents(){
+			addComponents() {
 				this.$router.push({
-					path:'/commodity/commodity/edit'
+					path: '/commodity/commodity/edit'
 				})
 			},
 			//编辑商品
-			editComponents(id){
+			editComponents(id) {
 				this.$router.push({
-					path:'/commodity/commodity/edit',
-					query:{
-						id:id
+					path: '/commodity/commodity/edit',
+					query: {
+						id: id
 					}
 				})
 			},
 			//上下架
-			editState(data,state){
-				var {id,version,online}=data;
-				var form={id,version,online};
-				form.online=state;
-				editProcuctInfo(form).then(res=>{
+			editState(data, state) {
+				var {
+					id,
+					version,
+					online
+				} = data;
+				var form = {
+					id,
+					version,
+					online
+				};
+				form.online = state;
+				editProcuctInfo(form).then(res => {
 					this.$message.success('操作成功');
 					this.getProcuct();
 				})
+			},
+			changeClass(e){
+				console.log(e)
 			}
 		}
 	}

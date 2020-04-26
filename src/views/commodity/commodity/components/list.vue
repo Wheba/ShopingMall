@@ -4,10 +4,6 @@
 			<el-form :inline="true" :model="searchForm" class="demo-form-inline" :size="sizeHeader">
 				<el-form-item label="商品分类">
 					<el-cascader :clearable="true" :show-all-levels="false" :props="props" @change="changeClass"></el-cascader>
-					<!-- <el-select v-model="searchForm.category" disabled placeholder="商品分类">
-						<el-option label="分类1" value="分类1"></el-option>
-						<el-option label="分类2" value="分类2"></el-option>
-					</el-select> -->
 				</el-form-item>
 				<el-form-item label="商品名称">
 					<el-input v-model="searchForm.name" placeholder="商品名称"></el-input>
@@ -22,7 +18,7 @@
 					</el-radio-group>
 				</el-form-item>
 				<el-form-item label="供应商">
-					<el-select v-model="searchForm.provider_id" placeholder="请选择供应商">
+					<el-select :clearable="true" v-model="searchForm.provider_id" placeholder="请选择供应商">
 						<el-option :label="item.short_name" :value="item.id" v-for="item in providerList" :key="item.id"></el-option>
 					</el-select>
 				</el-form-item>
@@ -36,10 +32,10 @@
 			<el-button circle icon='el-icon-refresh-left' :size='sizeHeader' style="float: right;" @click="refresh"></el-button>
 			<el-table :data="tableData" border :size='sizeHeader' style='margin-top: 10px;'>
 				<el-table-column type="index" :index="indexMethod" label='编号' align='center'></el-table-column>
-				<el-table-column label="商品信息" align='center' min-width='200'>
+				<el-table-column label="商品信息" header-align='center' min-width='200'>
 					<template slot-scope="scope">
-						<div style="display: flex;justify-content: center;align-items: center;">
-							<el-image style="width: 80px; height: 80px;flex-basis: 80px;" :src="scope.row.product_main_pic" fit="cover"></el-image>
+						<div style="display: flex;align-items: center;">
+							<el-image style="width: 80px; height: 80px;border: 1px dashed #d9d9d9;" :src="scope.row.product_main_pic" fit="contain"></el-image>
 							<div style="text-align: left;margin-left: 10px;">
 								<p v-text="scope.row.name"></p>
 								<p>商品编号：{{scope.row.product_code}}</p>
@@ -60,7 +56,11 @@
 						<p>供应商价格：{{toMoneyStr(scope.row.price_supply)}}</p>
 					</template>
 				</el-table-column>
-				<el-table-column prop="category" label="商品分类" align='center'></el-table-column>
+				<el-table-column label="商品分类" align='center'>
+					<template slot-scope="scope">
+						<span v-text="scope.row.category.name"></span>
+					</template>
+				</el-table-column>
 				<el-table-column prop="online" label="商品状态" align='center' :formatter="showState"></el-table-column>
 				<el-table-column prop='created' label="上架日期" align='center' :formatter="showTime"></el-table-column>
 				<el-table-column prop='updated' label="更新日期" align='center' :formatter="showTime"></el-table-column>
@@ -112,7 +112,8 @@
 		data() {
 			return {
 				searchForm: {
-					online: true
+					online: true,
+					category_code:''
 				},
 				form: {
 					page: 1,
@@ -124,7 +125,7 @@
 				props: {
 					lazy: true,
 					lazyLoad(node, resolve) {
-						console.log(node)
+						//console.log(node)
 						const {
 							level,
 							data
@@ -218,7 +219,11 @@
 				})
 			},
 			changeClass(e){
-				console.log(e)
+				if(e.length==0){
+					this.searchForm.category_code=''
+				}else{
+					this.searchForm.category_code=e[e.length-1];
+				}
 			}
 		}
 	}

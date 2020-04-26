@@ -10,16 +10,6 @@ export function getProcuct(params){
 	})
 }
 /**
- * 获取商品详情
- */
-export function getProcuctDetail(params){
-	return request({
-	  url: 'get/product_detail',
-	  method: 'get',
-		params
-	})
-}
-/**
  * 获取商品信息
  */
 export function getProcuctInfo(params){
@@ -35,6 +25,26 @@ export function getProcuctInfo(params){
 export function editProcuctInfo(data){
 	return request({
 	  url: 'add_edit/product',
+	  method: 'post',
+		data
+	})
+}
+/**
+ * 获取商品详情
+ */
+export function getProcuctDetail(params){
+	return request({
+	  url: 'get/product_detail',
+	  method: 'get',
+		params
+	})
+}
+/**
+ * 新增或编辑商品详情
+ */
+export function addOrEditProcuctDetail(data){
+	return request({
+	  url: 'add_edit/product_detail',
 	  method: 'post',
 		data
 	})

@@ -1,46 +1,47 @@
 <template>
 	<div id="componentsEditPage">
-		<el-form ref="form" :model="form" label-width="80px" :size="sizeHeader">
+		<el-form ref="form" :model="form" :rules="rules" label-width="80px" :size="sizeHeader">
 			<el-card class="box-card">
 				<div slot="header" class="clearfix">
-					<span>商品详情</span>
+					<span>商品信息</span>
 					<el-button icon='el-icon-refresh-left' style="float: right; padding: 3px 0" type="text">刷新</el-button>
 				</div>
 				<div>
-					<el-form-item label="标题">
+					<el-form-item label="标题" prop="title">
 						<el-input v-model="form.title" placeholder="请输入标题" :style="{width: inputWidth+'px'}"></el-input>
 					</el-form-item>
-					<el-form-item label="副标题">
+					<el-form-item label="副标题" prop="title_sub">
 						<el-input v-model="form.title_sub" placeholder="请输入副标题" :style="{width: inputWidth+'px'}"></el-input>
 					</el-form-item>
-					<el-form-item label="商品名称">
+					<el-form-item label="商品名称" prop="name">
 						<el-input v-model="form.name" placeholder="请输入商品名称" :style="{width: inputWidth+'px'}"></el-input>
 					</el-form-item>
-					<el-form-item label="商品分类">
-						<el-input v-model="form.category" placeholder="请输入商品分类" :style="{width: inputWidth+'px'}"></el-input>
+					<el-form-item label="商品分类" prop="category_code">
+						<el-cascader v-model="categoryList" :clearable="true" :show-all-levels="false" :props="props" @change="changeClass"
+						 :style="{width: inputWidth+'px'}"></el-cascader>
 					</el-form-item>
-					<el-form-item label="商品编码">
+					<el-form-item label="商品编码" prop="product_code">
 						<el-input v-model="form.product_code" placeholder="请输入商品编码" :style="{width: inputWidth+'px'}"></el-input>
 					</el-form-item>
-					<el-form-item label="市场价">
+					<el-form-item label="市场价" prop="price_marketing">
 						<el-input type="digit" v-model="form.price_marketing" @input="onMoneyInput(form.price_marketing,'price_marketing')"
 						 placeholder="请输入商品的市场价" :style="{width: inputWidth+'px'}">
 							<template slot="append">元</template>
 						</el-input>
 					</el-form-item>
-					<el-form-item label="销售价">
+					<el-form-item label="销售价" prop="price_sale">
 						<el-input type="digit" v-model="form.price_sale" @input="onMoneyInput(form.price_sale,'price_sale')" placeholder="请输入商品的销售价"
 						 :style="{width: inputWidth+'px'}">
 							<template slot="append">元</template>
 						</el-input>
 					</el-form-item>
-					<el-form-item label="供货价">
+					<el-form-item label="供货价" prop="price_supply">
 						<el-input type="digit" v-model="form.price_supply" @input="onMoneyInput(form.price_supply,'price_supply')"
 						 placeholder="请输入商品的供货价" :style="{width: inputWidth+'px'}">
 							<template slot="append">元</template>
 						</el-input>
 					</el-form-item>
-					<el-form-item label="供货商">
+					<el-form-item label="供货商" prop="provider_id">
 						<el-select v-model="form.provider_id" placeholder="请选择供货商" v-if="providerList" :style="{width: inputWidth+'px'}">
 							<el-option :label="item.short_name" :value="item.id" v-for="item in providerList" :key="item.id"></el-option>
 						</el-select>
@@ -55,7 +56,7 @@
 			</el-card>
 			<el-card style="margin-top: 15px;">
 				<el-alert style="margin-bottom: 10px;" title="限上传一张缩略图,尺寸最佳为180x180像素" type="info" show-icon :closable="false"></el-alert>
-				<el-form-item label="主缩略图">
+				<el-form-item label="主缩略图" prop="product_main_pic">
 					<el-upload accept="image/png, image/jpeg" class="avatar-uploader" :action="uploadApi" :show-file-list="false"
 					 :with-credentials="true" :before-upload="beforeAvatarUpload1" :on-success="handleAvatarSuccess1">
 						<img v-if="form.product_main_pic" :src="form.product_main_pic" class="avatar">
@@ -63,12 +64,19 @@
 					</el-upload>
 				</el-form-item>
 				<el-alert style="margin-bottom: 10px;" title="限上传五张缩略图,尺寸最佳为640x640像素" type="info" show-icon :closable="false"></el-alert>
-				<el-form-item label="轮播顶图">
+				<el-form-item label="轮播顶图" prop="slideList">
 					<el-upload accept="image/png, image/jpeg" :action="uploadApi" :file-list="slideList" :multiple="true" :limit="5"
-					 :on-exceed="onExceedUpload" :before-upload="beforeAvatarUpload1" :on-success="handleAvatarSuccess2" :on-remove="handleRemove" list-type="picture-card">
+					 :on-exceed="onExceedUpload" :before-upload="beforeAvatarUpload1" :on-success="handleAvatarSuccess2" :on-remove="handleRemove"
+					 list-type="picture-card">
 						<i class="el-icon-plus"></i>
 					</el-upload>
 				</el-form-item>
+			</el-card>
+			<el-card class="box-card" style="margin-top: 15px;">
+				<div slot="header" class="clearfix">
+					<span>商品详情</span>
+				</div>
+				<Tinymce ref="editor" v-model="detailForm.detail" :height="400" :width="800" />
 			</el-card>
 			<el-card class="box-card" style="margin-top: 15px;">
 				<div slot="header" class="clearfix">
@@ -78,17 +86,18 @@
 					<el-tag size="medium" :key='tag' closable @close="closeTag(index)" v-for="(tag,index) in form.product_tags">{{tag}}</el-tag>
 					<el-button size="mini" style="margin-left: 10px;" icon="el-icon-plus" @click="addTag">新增标签</el-button>
 				</el-form-item>
-				<el-alert style="margin-bottom: 10px;" title="限上传一张缩略图,尺寸最佳为180x180像素" type="info" show-icon :closable="false"></el-alert>
-				<el-form-item label="标签主图">
+				<el-alert style="margin-bottom: 10px;" title="限上传一张轮播图,尺寸最佳为180x180像素" type="info" show-icon :closable="false"></el-alert>
+				<el-form-item label="标签主图" prop="product_tag_icons">
 					<el-upload accept="image/png, image/jpeg" class="avatar-uploader" :action="uploadApi" :show-file-list="false"
 					 :with-credentials="true" :before-upload="beforeAvatarUpload1" :on-success="handleAvatarSuccess3">
-						<!-- <img v-if="form.product_main_pic" :src="form.product_main_pic" class="avatar">
-						<i v-else class="el-icon-plus avatar-uploader-icon"></i> -->
+						<img v-if="form.product_tag_icons[0]" :src="form.product_tag_icons[0]" class="avatar">
+						<i v-else class="el-icon-plus avatar-uploader-icon"></i>
 					</el-upload>
 				</el-form-item>
 			</el-card>
-			<el-form-item>
+			<el-form-item style='margin-top: 15px;text-align: center;'>
 				<el-button :loading="isSubmit" type="primary" @click="submit">提交</el-button>
+				<el-button @click="cancel">取消</el-button>
 			</el-form-item>
 		</el-form>
 	</div>
@@ -102,14 +111,20 @@
 	import {
 		getProcuctInfo,
 		getProcuctDetail,
-		editProcuctInfo
+		editProcuctInfo,
+		addOrEditProcuctDetail
 	} from '@/api/commodity/commodity'
+	import {
+		getCategoryList
+	} from '@/api/commodity/class'
 	import {
 		toMoneyStr,
 		checkMoney,
 		deepClone
 	} from '@/utils'
+	import Tinymce from '@/components/Tinymce'
 	export default {
+		components: { Tinymce },
 		computed: {
 			...mapGetters(['sizeHeader', 'uploadApi', "uploadsApi"]),
 			...mapState({
@@ -117,31 +132,129 @@
 			})
 		},
 		data() {
+			var slideList = (rule, value, callback) => {
+				if (this.slideList.length==0) {
+					callback(new Error('请至少上传一张轮播图'));
+				} else {
+					callback();
+				}
+			};
 			return {
 				inputWidth: 300,
 				id: null, //商品id
 				form: {
-					online:false,
+					online: false,
 					product_main_pic: null,
-					product_tags: []
+					product_tags: [],
+					category_code: '',
+					product_tag_icons:[]
 				},
+				detailForm:{},
+				categoryList: [],
 				slideList: [],
-				isSubmit:false
+				isSubmit: false,
+				props: {
+					lazy: true,
+					lazyLoad(node, resolve) {
+						const {
+							level,
+							data
+						} = node;
+						getCategoryList({
+							asc: ['sort'],
+							where: [{
+								k: 'parent_id',
+								v: data ? data.id : 0,
+								op: '='
+							}]
+						}).then(res => {
+							const nodes = res.datas.map(item => ({
+								value: item.code,
+								id: item.id,
+								label: item.name,
+								leaf: level >= 2
+							}))
+							resolve(nodes);
+						})
+					}
+				},
+				rules: {
+					title: [{
+						required: true,
+						message: '请输入标题',
+						trigger: 'blur'
+					}],
+					title_sub: [{
+						required: true,
+						message: '请输入副标题',
+						trigger: 'blur'
+					}],
+					name: [{
+						required: true,
+						message: '请输入商品名称',
+						trigger: 'blur'
+					}],
+					category_code: [{
+						required: true,
+						message: '请选择商品分类',
+						trigger: 'blur'
+					}],
+					product_code: [{
+						required: true,
+						message: '请输入商品编码',
+						trigger: 'blur'
+					}],
+					price_marketing: [{
+						required: true,
+						message: '请输入商品的市场价',
+						trigger: 'blur'
+					}],
+					price_sale: [{
+						required: true,
+						message: '请输入商品的销售价',
+						trigger: 'blur'
+					}],
+					price_supply: [{
+						required: true,
+						message: '请输入商品的供货价',
+						trigger: 'blur'
+					}],
+					provider_id: [{
+						required: true,
+						message: '请选择供货商',
+						trigger: 'blur'
+					}],
+					provider_id: [{
+						required: true,
+						message: '请选择供货商',
+						trigger: 'blur'
+					}],
+					product_main_pic: [{
+						required: true,
+						message: '请先上传缩略图',
+						trigger: 'blur'
+					}],
+					slideList: [{
+						validator: slideList,
+						trigger: 'blur'
+					}],
+					product_tag_icons: [{
+						type: 'array',
+						required: true,
+						message: '请先上传标签主图',
+						trigger: 'change'
+					}]
+				}
 			}
 		},
 		created() {
 			this.id = this.$route.query.id;
 			if (this.id) { //编辑
 				this.getProcuctInfo()
-			} else { //新增
-
 			}
 		},
 		methods: {
 			getProcuctInfo() {
-				getProcuctDetail({
-					id: this.id
-				}).then(res => {})
 				getProcuctInfo({
 					id: this.id
 				}).then(res => {
@@ -160,14 +273,24 @@
 						provider_id,
 						product_tags,
 						product_main_pic,
-						product_slide_pic
+						product_slide_pic,
+						category_code,
+						product_tag_icons,
+						product_detail_id
 					} = res.datas;
+					//商品分类切割
+					if (category_code) {
+						this.categoryList = [category_code.slice(0, 4), category_code.slice(0, 8), category_code];
+					}
 					//价格转换
 					price_marketing = toMoneyStr(price_marketing)
 					price_sale = toMoneyStr(price_sale)
 					price_supply = toMoneyStr(price_supply)
-					this.slideList=product_slide_pic.map(function(item,index,input){
-						return {name:index,url:item}
+					this.slideList = product_slide_pic.map(function(item, index, input) {
+						return {
+							name: index,
+							url: item
+						}
 					})
 					this.form = {
 						id,
@@ -183,9 +306,17 @@
 						price_supply,
 						provider_id,
 						product_tags,
-						product_main_pic
+						product_main_pic,
+						category_code,
+						product_tag_icons:product_tag_icons?product_tag_icons:[]
 					}
+					this.getProcuctDetail(product_detail_id)
 				})
+			},
+			getProcuctDetail(id){
+				getProcuctDetail({
+					id: id
+				}).then(res => {this.detailForm=res.datas})
 			},
 			onMoneyInput(e, keyName) {
 				this.form[keyName] = checkMoney(e);
@@ -221,7 +352,7 @@
 				}
 				this.slideList = fileList;
 			},
-			handleRemove(file,fileList){
+			handleRemove(file, fileList) {
 				this.slideList = fileList;
 			},
 			//处理标签
@@ -246,12 +377,12 @@
 					});
 				})
 			},
-			handleAvatarSuccess3(res, file){
-				// if (res.code == 0) {
-				// 	this.$set(this.form, 'product_main_pic', res.datas)
-				// } else {
-				// 	this.$message.error('图片上传失败！请重新上传');
-				// }
+			handleAvatarSuccess3(res, file) {
+				if (res.code == 0) {
+					this.$set(this.form.product_tag_icons, 0, res.datas)
+				} else {
+					this.$message.error('图片上传失败！请重新上传');
+				}
 			},
 			//提交信息
 			handleSlideList() {
@@ -268,23 +399,51 @@
 				//console.log(list)
 			},
 			submit() {
-				this.isSubmit=true;
-				this.form.product_slide_pic=this.handleSlideList();
-				//价格转换
-				var form=deepClone(this.form)
-				form.price_marketing*=100;
-				form.price_sale*=100;
-				form.price_supply*=100;
-				editProcuctInfo(form).then(res=>{
-					console.log(res)
+				this.$refs.form.validate(valid => {
+					if (valid) {
+						this.isSubmit = true;
+						this.addOrEditDetail();
+						console.log(this.detailForm)
+						// this.form.product_slide_pic=this.handleSlideList();
+						// //价格转换
+						// var form=deepClone(this.form)
+						// form.price_marketing*=100;
+						// form.price_sale*=100;
+						// form.price_supply*=100;
+						// editProcuctInfo(form).then(res=>{
+						// 	this.isSubmit=false;
+						// 	this.$message.success('操作成功');
+						// 	this.cancel();
+						// }).catch(error=>{
+						// 	this.isSubmit=false;
+						// })
+					} else {
+						console.log('error submit!!');
+						return false;
+					}
+				})
+			},
+			//新增或编辑详情
+			addOrEditDetail(){
+				var {id,detail}=this.detailForm;
+				var form={detail}
+				if(id){
+					form.id=id;
+				}
+				addOrEditProcuctDetail(form).then(res=>{
 					this.isSubmit=false;
-					this.$router.push({
-						path:'/commodity/commodity/list'
-					})
-					this.$message.success('操作成功');
 				}).catch(error=>{
 					this.isSubmit=false;
 				})
+			},
+			cancel() {
+				this.$router.push({
+					path: '/commodity/commodity/list'
+				})
+			},
+			//修改商品分类
+			changeClass(e) {
+				this.form.category_code = e[e.length - 1];
 			}
 		}
 	}

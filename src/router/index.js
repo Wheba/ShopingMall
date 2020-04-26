@@ -133,7 +133,18 @@ export const constantRoutes = [
 			{
 				path:'class',
 				component: () => import('@/views/commodity/class'),
-				meta: { title: '分类列表' }
+				meta: { title: '分类列表' },
+				redirect: '/commodity/class/list',
+				children:[{
+					path:'list',
+					component: () => import('@/views/commodity/class/components/list'),
+					meta: { title: '分类列表',breadcrumb: false},
+				},{
+					path:'edit',
+					component: () => import('@/views/commodity/class/components/edit'),
+					meta: { title: '新增或编辑'},
+					hidden:true
+				}]
 			}
 		]
 	},

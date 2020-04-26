@@ -4,7 +4,7 @@ import request from '@/utils/request'
  */
 export function getProcuct(params){
 	return request({
-	  url: 'page/product',
+	  url: 'product/page',
 	  method: 'get',
 		params
 	})

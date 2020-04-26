@@ -157,7 +157,7 @@
 						price_marketing,
 						price_sale,
 						price_supply,
-						provider,
+						provider_id,
 						product_tags,
 						product_main_pic,
 						product_slide_pic
@@ -166,7 +166,6 @@
 					price_marketing = toMoneyStr(price_marketing)
 					price_sale = toMoneyStr(price_sale)
 					price_supply = toMoneyStr(price_supply)
-					var provider_id = provider.id;
 					this.slideList=product_slide_pic.map(function(item,index,input){
 						return {name:index,url:item}
 					})

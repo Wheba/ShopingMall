@@ -1,5 +1,7 @@
 <template>
-	<div>分类列表</div>
+	<div class="app-container">
+		<router-view />
+	</div>
 </template>
 
 <script>

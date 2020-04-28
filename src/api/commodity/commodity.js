@@ -46,7 +46,7 @@ export function addOrEditProcuctDetail(data){
     return request({
 	  url: 'add_edit/product_detail',
 	  method: 'post',
-        data
+    data
     })
 }
 /**

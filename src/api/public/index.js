@@ -26,3 +26,13 @@ export function getSkuList(){
 	  method: 'get'
     })
 }
+/**
+ * 编辑sku
+ */
+export function editSku(data){
+	return request({
+	url: 'edit/sku',
+	method: 'post',
+	data
+	})
+}

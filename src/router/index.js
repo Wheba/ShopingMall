@@ -97,7 +97,18 @@ export const constantRoutes = [
 			{
 				path:'commodity',
 				component: () => import('@/views/order/commodity'),
-				meta: { title: '商品订单' }
+				meta: { title: '商品订单' },
+				redirect: '/order/commodity/list',
+				children:[{
+					path:'list',
+					component: () => import('@/views/order/commodity/components/list'),
+					meta: { title: '商品订单',breadcrumb: false}
+				},{
+					path:'edit',
+					component: () => import('@/views/order/commodity/components/edit'),
+					meta: { title: '新增或编辑' },
+					hidden:true
+				}]
 			},{
 				path:'cardticket',
 				component: () => import('@/views/order/cardticket'),

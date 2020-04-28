@@ -21,7 +21,7 @@
 						 :style="{width: inputWidth+'px'}"></el-cascader>
 					</el-form-item>
 					<el-form-item label="商品编码" prop="product_code">
-						<el-input v-model="form.product_code" placeholder="请输入商品编码" :style="{width: inputWidth+'px'}"></el-input>
+						<el-input disabled v-model="form.product_code" placeholder="请输入商品编码" :style="{width: inputWidth+'px'}"></el-input>
 					</el-form-item>
 					<el-form-item label="市场价" prop="price_marketing">
 						<el-input type="digit" v-model="form.price_marketing" @input="onMoneyInput(form.price_marketing,'price_marketing')"
@@ -54,6 +54,7 @@
 					</el-form-item>
 				</div>
 			</el-card>
+			<Specs :code="form.product_code" :data="specsData" style="margin-top: 15px;" v-if="specsData"></Specs>
 			<el-card style="margin-top: 15px;">
 				<el-alert style="margin-bottom: 10px;" title="限上传一张缩略图,尺寸最佳为180x180像素" type="info" show-icon :closable="false"></el-alert>
 				<el-form-item label="主缩略图" prop="product_main_pic">
@@ -76,7 +77,7 @@
 				<div slot="header" class="clearfix">
 					<span>商品详情</span>
 				</div>
-				<Tinymce ref="editor" v-model="detailForm.detail" :height="400" :width="800" />
+				<Tinymce ref="editor" v-model="detailForm.detail" :height="400" />
 			</el-card>
 			<el-card class="box-card" style="margin-top: 15px;">
 				<div slot="header" class="clearfix">
@@ -112,7 +113,8 @@
 		getProcuctInfo,
 		getProcuctDetail,
 		editProcuctInfo,
-		addOrEditProcuctDetail
+		addOrEditProcuctDetail,
+		getProcuctCode
 	} from '@/api/commodity/commodity'
 	import {
 		getCategoryList
@@ -123,8 +125,9 @@
 		deepClone
 	} from '@/utils'
 	import Tinymce from '@/components/Tinymce'
+	import Specs from './specs.vue'
 	export default {
-		components: { Tinymce },
+		components: { Tinymce,Specs },
 		computed: {
 			...mapGetters(['sizeHeader', 'uploadApi', "uploadsApi"]),
 			...mapState({
@@ -142,12 +145,14 @@
 			return {
 				inputWidth: 300,
 				id: null, //商品id
+				specsData:null,
 				form: {
 					online: false,
 					product_main_pic: null,
 					product_tags: [],
 					category_code: '',
-					product_tag_icons:[]
+					product_tag_icons:[],
+					product_code:''
 				},
 				detailForm:{},
 				categoryList: [],
@@ -251,6 +256,12 @@
 			this.id = this.$route.query.id;
 			if (this.id) { //编辑
 				this.getProcuctInfo()
+			}else{
+				this.specsData=[],
+				//获取新增商品的code
+				getProcuctCode().then(res=>{
+					this.form.product_code=res.datas;
+				})
 			}
 		},
 		methods: {
@@ -276,8 +287,11 @@
 						product_slide_pic,
 						category_code,
 						product_tag_icons,
-						product_detail_id
+						product_detail_id,
+						skus
 					} = res.datas;
+					//商品规格数据处理
+					this.handleSpecs(skus);
 					//商品分类切割
 					if (category_code) {
 						this.categoryList = [category_code.slice(0, 4), category_code.slice(0, 8), category_code];
@@ -317,6 +331,10 @@
 				getProcuctDetail({
 					id: id
 				}).then(res => {this.detailForm=res.datas})
+			},
+			//商品规格数据处理
+			handleSpecs(list){
+				this.specsData=list;
 			},
 			onMoneyInput(e, keyName) {
 				this.form[keyName] = checkMoney(e);

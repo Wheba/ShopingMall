@@ -86,7 +86,6 @@
 </template>
 
 <script>
-	let id = 0;
 	import {
 		mapGetters,
 		mapState
@@ -98,6 +97,9 @@
 	import {
 		getCategoryList
 	} from '@/api/commodity/class'
+	import {
+		getSkuList
+	} from '@/api/public'
 	import {
 		parseTime,
 		toMoneyStr
@@ -144,6 +146,9 @@
 			}
 		},
 		created() {
+			getSkuList().then(res=>{
+				console.log(res)
+			})
 			this.query()
 		},
 		methods: {

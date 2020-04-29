@@ -5,7 +5,7 @@
 			<el-button style="float: right; padding: 3px 0" type="text" icon="el-icon-plus" @click="addSub">新增子类</el-button>
 		</div>
 		<el-table :data="tableData" border :size='sizeHeader'>
-			<el-table-column v-for="(item,index) in specsCol" :label="item" align='center'>
+			<el-table-column :key="item" v-for="(item,index) in specsCol" :label="item" align='center'>
 				<template slot-scope="scope">
 					<span v-text="scope.row.spu_values[index].value" v-if="scope.$index!=saveState.index"></span>
 					<el-input v-model="scope.row.spu_values[index].value" :size="sizeHeader" v-else></el-input>
@@ -67,9 +67,9 @@
 					spu_values: [],
 					sku: ''
 				},
-				saveState:{
-					index:-1,
-					state:0,//0待编辑 1编辑中 2保存中
+				saveState: {
+					index: -1,
+					state: 0, //0待编辑 1编辑中 2保存中
 				}
 			}
 		},
@@ -80,22 +80,23 @@
 					price,
 					product_code,
 					sku,
-					spu_value_ids,
 					spu_values,
 					stock
 				} = item;
-				price = toMoneyStr(price)
+				price = toMoneyStr(price)//金额处理
 				spu_values = spu_values.map(function(item2) {
 					var {
 						id,
 						name,
 						spu_id,
+						sku_id,
 						value
 					} = item2
 					return {
 						id,
 						name,
 						spu_id,
+						sku_id,
 						value
 					}
 				})
@@ -104,7 +105,6 @@
 					price,
 					product_code,
 					sku,
-					spu_value_ids,
 					spu_values,
 					stock
 				}
@@ -126,28 +126,28 @@
 		},
 		methods: {
 			edit(index) {
-				if(this.saveState.index==index){//保存
-					if(this.saveState.state==2){//当前保存中
+				if (this.saveState.index == index) { //保存
+					if (this.saveState.state == 2) { //当前保存中
 						this.$message.warning('请勿频繁操作')
-					}else{
-						if(this.checkSku(this.tableData[index])){
-							this.saveState.state=2;//开始保存或新增
-							var form=deepClone(this.tableData[index])
-							form.price=Math.floor(form.price*100);
-							editSku(form).then(res=>{
-								this.saveState={
-									index:-1,
-									state:0
+					} else {
+						if (this.checkSku(this.tableData[index])) {
+							this.saveState.state = 2; //开始保存或新增
+							var form = deepClone(this.tableData[index])
+							form.price = Math.floor(form.price * 100);
+							editSku(form).then(res => {
+								this.saveState = {
+									index: -1,
+									state: 0
 								}
 								this.$message.success('保存成功')
 							})
 						}
 					}
-				}else{//编辑
-					if(this.saveState.state==0){//可编辑
-						this.saveState.index=index;
-						this.saveState.state=1;
-					}else{//不可编辑
+				} else { //编辑
+					if (this.saveState.state == 0) { //可编辑
+						this.saveState.index = index;
+						this.saveState.state = 1;
+					} else { //不可编辑
 						this.$message.warning('请先保存信息')
 					}
 				}
@@ -155,17 +155,17 @@
 			//检测sku
 			checkSku(item) {
 				var j;
-				for(let i in item){
-					if(item[i]){
-						if(i=='spu_values'){
-							for(j=0;j<item[i].length;j++){
-								if(!item[i][j].value){
+				for (let i in item) {
+					if (item[i]) {
+						if (i == 'spu_values') {
+							for (j = 0; j < item[i].length; j++) {
+								if (!item[i][j].value) {
 									this.$message.warning('请先填写完信息')
 									return false
 								}
 							}
 						}
-					}else{
+					} else {
 						this.$message.warning('请先填写完信息')
 						return false
 					}

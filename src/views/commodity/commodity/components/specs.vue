@@ -78,12 +78,15 @@
 				spuList: state => state.data.spuList
 			}),
 			getSpuList(){
+				var list=[];
 				var currentList=this.specsCol.map(function(item){
 					return item.name
 				})
-				var list=this.spuList.filter(function(item){
-					return !currentList.includes(item.name)
-				})
+				if(this.spuList){
+					list=this.spuList.filter(function(item){
+						return !currentList.includes(item.name)
+					})
+				}
 				return list
 			}
 		},
@@ -113,17 +116,18 @@
 			}
 		},
 		created() {
-			this.addObj.product_code=this.code;
-			var list=this.handleSku(this.data)
-			console.log(list)
-			this.tableData = list;
+			if(this.data.length>0){
+				var list=this.handleSku(this.data)
+				this.tableData = list;
+			}
 		},
 		methods: {
 			//数据处理
 			handleTable(list){
 				if(list){
-					var index=-1,maxNum=0,i,j;
+					var index=0,maxNum=0,i,j;
 					for(i=0;i<list.length;i++){
+						list[i].spu_values=list[i].spu_values?list[i].spu_values:[]
 						if(list[i].spu_values.length>maxNum){
 							index=i
 							maxNum=list[i].spu_values.length
@@ -140,30 +144,29 @@
 							spu_id: list[index].spu_values[j].spu_id
 						})
 					}
-					var {name,spu_id}=list[index].spu_values[0];
-					return {
-						maxIndex:index,
-						maxNum:maxNum,
-						spu_v:{name,spu_id,value:''}
-					}
 				}
 			},
 			handleSku(list){
-				var {maxNum,spu_v}=this.handleTable(list);
+				this.handleTable(list);
 				var that=this;
 				list=list.map(function(item,index){
 					var {id,price,product_code,sku,stock,spu_values}=item;
 					price = toMoneyStr(price)//金额处理
 					spu_values=that.handleSupValues(spu_values)
-					var isEdit=false
-					if(spu_values.length<maxNum){
-						spu_v.sku_id=id
-						spu_values.unshift(deepClone(spu_v))
-						isEdit=true
-					}
+					var isEdit=that.addSpuValues(spu_values);
 					return {id,price,product_code,sku,stock,spu_values,isEdit}
 				})
 				return list
+			},
+			addSpuValues(list){
+				if(list.length<this.specsCol.length){//需新增缺少的spuValues
+					var deL=this.specsCol.length-list.length;
+					for(var i=deL-1;i>-1;i--){
+						list.unshift({name:this.specsCol[i].name,spu_id:this.specsCol[i].id})
+					}
+					return true
+				}
+				return false
 			},
 			handleSupValues(list){
 				list=list.map(function(item){
@@ -197,6 +200,7 @@
 			},
 			//检测sku
 			checkSku(item) {
+				console.log(item)
 				var j;
 				for (let i in item) {
 					if (item[i]) {
@@ -230,16 +234,11 @@
 					}
 				}
 				var addObj = deepClone(this.addObj);
+				addObj.product_code=this.code;
 				this.tableData.push(addObj)
 			},
 			//显示新增规格
 			addSpecsShow(){
-				for (var i = 0; i < this.tableData.length; i++) {
-					if (this.tableData[i].isEdit) {
-						this.$message.warning('请先保存信息')
-						return
-					}
-				}
 				this.isAddSpecs=false;
 				this.specsForm={id:null,name:''}
 				this.specsShow=true;
@@ -290,6 +289,7 @@
 					tableItem.isEdit=true;
 					return tableItem
 				})
+				this.addObj.spu_values.unshift({spu_id:item.id,name:item.name,value:''})
 				this.specsCol.unshift(item)
 				console.log(this.tableData)
 				this.$message.success('新增成功')

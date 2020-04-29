@@ -129,7 +129,7 @@
 	export default {
 		components: { Tinymce,Specs },
 		computed: {
-			...mapGetters(['sizeHeader', 'uploadApi', "uploadsApi"]),
+			...mapGetters(['sizeHeader', 'uploadApi', 'uploadsApi']),
 			...mapState({
 				providerList: state => state.data.providerList
 			})

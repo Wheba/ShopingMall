@@ -98,9 +98,6 @@
 		getCategoryList
 	} from '@/api/commodity/class'
 	import {
-		getSkuList
-	} from '@/api/public'
-	import {
 		parseTime,
 		toMoneyStr
 	} from '@/utils'
@@ -146,9 +143,6 @@
 			}
 		},
 		created() {
-			getSkuList().then(res=>{
-				console.log(res)
-			})
 			this.query()
 		},
 		methods: {

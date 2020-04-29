@@ -46,6 +46,7 @@ export default {
 		this.$store.dispatch('data/providerList')
 		this.$store.dispatch('data/payMentList')
 		this.$store.dispatch('data/typeActivityList')
+		this.$store.dispatch('data/spuList')
 	},
   methods: {
     handleClickOutside() {
